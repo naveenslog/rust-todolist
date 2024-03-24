@@ -8,3 +8,18 @@ diesel::table! {
         completed -> Bool,
     }
 }
+
+diesel::table! {
+    user (id) {
+        id -> Nullable<Integer>,
+        username -> Text,
+        email -> Text,
+        hashed_password -> Text,
+        created_at -> Timestamp,
+    }
+}
+
+diesel::allow_tables_to_appear_in_same_query!(
+    todo,
+    user,
+);

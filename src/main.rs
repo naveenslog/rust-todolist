@@ -13,5 +13,6 @@ fn rocket() -> _ {
     rocket::build()
         .attach(db::DbConn::fairing())
         .mount("/", routes::get_core_routes())
-        .mount("/api", routes::get_api_routes())
+        .mount("/api", routes::get_user_api_routes())
+        .mount("/api", routes::get_todo_api_routes())
 }

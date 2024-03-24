@@ -3,32 +3,23 @@ use diesel::RunQueryDsl;
 use rocket::http::Status;
 use rocket::serde::json::Json;
 
-use crate::schema::todo::dsl::*;
-use crate::models::{NewTodo, Todo};
 use crate::db;
+use crate::models::{NewTodo, Todo};
+use crate::schema::todo::dsl::*;
 
-pub fn get_core_routes() -> Vec<rocket::Route> {
-    routes![hello]
-}
-
-pub fn get_api_routes() -> Vec<rocket::Route> {
+pub fn get_todo_routes() -> Vec<rocket::Route> {
     routes![get_todos, create_todo, update_todo, delete_todo]
 }
 
-#[get("/")]
-fn hello() -> String {
-    "Hello, World!".to_string()
-}
-
 #[get("/todos")]
-fn get_todos() -> Result<Json<Vec<Todo>>, String> {
+pub fn get_todos() -> Result<Json<Vec<Todo>>, String> {
     let conn = &mut db::establish_connection();
     let results = todo.load::<Todo>(conn).expect("Error loading posts");
     Ok(Json(results))
 }
 
 #[post("/todos", format = "json", data = "<new_todo>")]
-fn create_todo(new_todo: Json<NewTodo>) -> Result<Json<&'static str>, Status> {
+pub fn create_todo(new_todo: Json<NewTodo>) -> Result<Json<&'static str>, Status> {
     let conn = &mut db::establish_connection();
     let result = diesel::insert_into(todo)
         .values(&new_todo.into_inner())
@@ -56,7 +47,7 @@ fn update_todo(pk: i32, todo_update: Json<NewTodo>) -> Result<Json<&'static str>
 }
 
 #[delete("/todos/<pk>")]
-fn delete_todo(pk: i32) -> Result<Json<&'static str>, Status> {
+pub fn delete_todo(pk: i32) -> Result<Json<&'static str>, Status> {
     let conn = &mut db::establish_connection();
     let result = diesel::delete(todo.filter(id.eq(pk))).execute(conn);
 
